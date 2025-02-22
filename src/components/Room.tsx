@@ -28,7 +28,7 @@ export const Room = ({
     const remoteVideoRef = useRef<any>();
     const localVideoRef = useRef<any>();
 
-    const handleEndCall = ()=>{
+    const handleEndCall = () => {
         endCall();
         socket?.disconnect();
         setLobby(true);
@@ -168,6 +168,11 @@ export const Room = ({
                 return pc;
             });
             console.log("loop closed");
+        })
+        socket.on("disconnect", ({ }) => {
+            setLobby(false);
+            setSendingPc(null);
+            console.log("Disconnected");
         })
 
         socket.on("lobby", () => {
