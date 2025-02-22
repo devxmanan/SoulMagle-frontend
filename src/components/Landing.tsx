@@ -1,8 +1,33 @@
 import { useEffect, useRef, useState } from "react"
 // import { Link } from "react-router-dom";
 import { Room } from "./Room";
+import { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 export const Landing = () => {
+
+
+    const [user, setUser] = useState<any>(null);
+
+    const navigate = useNavigate();
+
+
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user: any) => {
+            if (user) {
+                setUser(user);
+            } else {
+                navigate("/login", { replace: true })
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+    console.log(user);
+
+
     const [localAudioTrack, setLocalAudioTrack] = useState<MediaStreamTrack | null>(null);
     const [localVideoTrack, setlocalVideoTrack] = useState<MediaStreamTrack | null>(null);
     const videoRef = useRef<HTMLVideoElement>(null);

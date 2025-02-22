@@ -1,11 +1,15 @@
 import { GrGoogle } from "react-icons/gr";
 import { useNavigate } from "react-router-dom";
+import { signInWithGoogle } from "../firebase";
 
 const Login = () => {
-const navigate = useNavigate();
-    const handleGoogleLogin = (e: any) => {
+    const navigate = useNavigate();
+    const handleGoogleLogin = async (e: any) => {
         e.preventDefault();
-        navigate("/home", {replace: true})
+        const user = await signInWithGoogle();
+        if (user) {
+            navigate("/", { replace: true })
+        }
     };
 
     return (
@@ -13,7 +17,7 @@ const navigate = useNavigate();
             <div className="content">
                 <h1>Welcome to Soulmagle</h1>
                 <p>Discover your perfect match based on preferences.</p>
-                    <button onClick={handleGoogleLogin} className="googleLogin" type="submit"><GrGoogle/>Continue with Google</button>
+                <button onClick={handleGoogleLogin} className="googleLogin" type="submit"><GrGoogle />Continue with Google</button>
             </div>
         </div>
     );
