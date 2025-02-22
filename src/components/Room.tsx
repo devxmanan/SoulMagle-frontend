@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { FaArrowRight } from "react-icons/fa";
+import { MdCallEnd } from "react-icons/md";
 // import { useSearchParams } from "react-router-dom";
 import { Socket, io } from "socket.io-client";
 
@@ -7,11 +9,13 @@ const URL = "https://soulmagle-backend.onrender.com";
 export const Room = ({
     name,
     localAudioTrack,
-    localVideoTrack
+    localVideoTrack,
+    endCall
 }: {
     name: string,
     localAudioTrack: MediaStreamTrack | null,
     localVideoTrack: MediaStreamTrack | null,
+    endCall: ()=>void,
 }) => {
     // const [searchParams, setSearchParams] = useSearchParams();
     const [lobby, setLobby] = useState(true);
@@ -207,10 +211,12 @@ export const Room = ({
         <div style={{ width: "50%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", borderRight: "1px solid black", padding: "20px" }}>
             Hi {name}
             <video style={{ backgroundColor: "grey", alignItems: "center", justifyContent: "center", borderRadius: "10px", aspectRatio: "16/9" }} autoPlay width={400} height={"auto"} ref={localVideoRef} />
+            <button onClick={endCall} style={{ height: "50px", width: "50px", borderRadius: "40px", border: "none", fontSize: "30px", backgroundColor: "#e8433e", color: "white", display: "flex", alignItems: "center", justifyContent: "center", marginTop: "20px", cursor: "pointer" }}><MdCallEnd /></button>
         </div>
         <div style={{ width: "50%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", borderLeft: "1px solid black", padding: "20px" }}>
             {lobby ? "Waiting to connect you to someone" : "connected successfully"}
-            <video style={{ backgroundColor: "grey", alignItems: "center", justifyContent: "center", borderRadius: "10px", aspectRatio: "16/9" }} autoPlay width={400} height={"auto"} ref={remoteVideoRef} />
+            <video style={{ backgroundColor: "grey", alignItems: "center", justifyContent: "center", borderRadius: "10px", aspectRatio: "16/9", }} autoPlay width={400} height={"auto"} ref={remoteVideoRef} />
+            <button style={{ height: "50px", width: "50px", borderRadius: "40px", border: "none", fontSize: "30px", backgroundColor: "grey", color: "white", display: "flex", alignItems: "center", justifyContent: "center", marginTop: "20px", cursor: "pointer" }}><FaArrowRight /></button>
         </div>
     </div>
 }

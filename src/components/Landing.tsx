@@ -9,7 +9,9 @@ export const Landing = () => {
     const [cameraRdy, setCameraRdy] = useState(false);
 
     const [joined, setJoined] = useState(false);
-
+    const endCall = () => {
+        setJoined(false);
+    }
     const getCam = async () => {
         const stream = await window.navigator.mediaDevices.getUserMedia({
             video: true,
@@ -41,11 +43,11 @@ export const Landing = () => {
         return <div style={{ display: 'flex', gap: "20px", alignItems: "center", justifyContent: "center", flexDirection: "column", minHeight: "100vh" }}>
             <video style={{ backgroundColor: "grey", borderRadius: "10px", aspectRatio: "16/9" }} autoPlay width={500} height="auto" ref={videoRef}></video>
             {cameraRdy ? <p style={{ color: "green" }}>Ready to Join</p> : <p style={{ color: "red" }}>Camera not ready</p>}
-            <button onClick={() => {
+            <button className="primaryBtn" onClick={() => {
                 setJoined(true);
             }}>Connect</button>
         </div>
     }
 
-    return <Room name={"Manan"} localAudioTrack={localAudioTrack} localVideoTrack={localVideoTrack} />
+    return <Room endCall={endCall} name={"Manan"} localAudioTrack={localAudioTrack} localVideoTrack={localVideoTrack} />
 }
