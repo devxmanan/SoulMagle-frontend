@@ -15,7 +15,7 @@ export const Room = ({
     name: string,
     localAudioTrack: MediaStreamTrack | null,
     localVideoTrack: MediaStreamTrack | null,
-    endCall: ()=>void,
+    endCall: () => void,
 }) => {
     // const [searchParams, setSearchParams] = useSearchParams();
     const [lobby, setLobby] = useState(true);
@@ -207,17 +207,18 @@ export const Room = ({
         }
     }, [localVideoRef])
 
-    return <div style={{ display: "flex" }}>
-        <div style={{ width: "50%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", borderRight: "1px solid black", padding: "20px" }}>
-            Hi {name}
-            <video style={{ backgroundColor: "grey", alignItems: "center", justifyContent: "center", borderRadius: "10px", aspectRatio: "16/9" }} autoPlay width={400} height={"auto"} ref={localVideoRef} />
-            <button onClick={endCall} style={{ height: "50px", width: "50px", borderRadius: "40px", border: "none", fontSize: "30px", backgroundColor: "#e8433e", color: "white", display: "flex", alignItems: "center", justifyContent: "center", marginTop: "20px", cursor: "pointer" }}><MdCallEnd /></button>
-        </div>
-        <div style={{ width: "50%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", borderLeft: "1px solid black", padding: "20px" }}>
+    return <div className="room">
+        <div className="userRandom" >
             {lobby ? "Waiting to connect you to someone" : "connected successfully"}
-            <video style={{ backgroundColor: "grey", alignItems: "center", justifyContent: "center", borderRadius: "10px", aspectRatio: "16/9", }} autoPlay width={400} height={"auto"} ref={remoteVideoRef} />
+            <video className="videos_after_connection" autoPlay width={400} height={"auto"} ref={remoteVideoRef} />
             <button style={{ height: "50px", width: "50px", borderRadius: "40px", border: "none", fontSize: "30px", backgroundColor: "grey", color: "white", display: "flex", alignItems: "center", justifyContent: "center", marginTop: "20px", cursor: "pointer" }}><FaArrowRight /></button>
         </div>
+        <div className="userMe" >
+            Hi {name}
+            <video className="videos_after_connection" autoPlay width={400} height={"auto"} ref={localVideoRef} />
+            <button onClick={endCall} style={{ height: "50px", width: "50px", borderRadius: "40px", border: "none", fontSize: "30px", backgroundColor: "#e8433e", color: "white", display: "flex", alignItems: "center", justifyContent: "center", marginTop: "20px", cursor: "pointer" }}><MdCallEnd /></button>
+        </div>
+
     </div>
 }
 
