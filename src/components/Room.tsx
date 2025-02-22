@@ -152,7 +152,7 @@ export const Room = ({
         });
 
         socket.on("answer", ({ roomId, sdp: remoteSdp }) => {
-            if(roomId){}
+            if (roomId) { }
             setLobby(false);
             setSendingPc(pc => {
                 pc?.setRemoteDescription(remoteSdp)
@@ -203,12 +203,15 @@ export const Room = ({
         }
     }, [localVideoRef])
 
-    return <div>
-        Hi {name}
-
-        <video autoPlay width={400} height={400} ref={localVideoRef} />
-        {lobby ? "Waiting to connect you to someone" : null}
-        <video autoPlay width={400} height={400} ref={remoteVideoRef} />
+    return <div style={{ display: "flex" }}>
+        <div style={{ width: "50%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", borderRight: "1px solid black", padding: "20px" }}>
+            Hi {name}
+            <video style={{ backgroundColor: "grey", alignItems: "center", justifyContent: "center", borderRadius: "10px", aspectRatio: "16/9" }} autoPlay width={400} height={"auto"} ref={localVideoRef} />
+        </div>
+        <div style={{ width: "50%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", borderLeft: "1px solid black", padding: "20px" }}>
+            {lobby ? "Waiting to connect you to someone" : "connected successfully"}
+            <video style={{ backgroundColor: "grey", alignItems: "center", justifyContent: "center", borderRadius: "10px", aspectRatio: "16/9" }} autoPlay width={400} height={"auto"} ref={remoteVideoRef} />
+        </div>
     </div>
 }
 

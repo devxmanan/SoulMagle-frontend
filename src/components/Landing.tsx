@@ -3,10 +3,10 @@ import { useEffect, useRef, useState } from "react"
 import { Room } from "./Room";
 
 export const Landing = () => {
-    const [name, setName] = useState("");
     const [localAudioTrack, setLocalAudioTrack] = useState<MediaStreamTrack | null>(null);
     const [localVideoTrack, setlocalVideoTrack] = useState<MediaStreamTrack | null>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
+    const [cameraRdy, setCameraRdy] = useState(false);
 
     const [joined, setJoined] = useState(false);
 
@@ -21,8 +21,10 @@ export const Landing = () => {
         setLocalAudioTrack(audioTrack);
         setlocalVideoTrack(videoTrack);
         if (!videoRef.current) {
+            setCameraRdy(false);
             return;
         }
+        setCameraRdy(true);
         videoRef.current.srcObject = new MediaStream([videoTrack])
         videoRef.current.play();
         // MediaStream
@@ -35,18 +37,15 @@ export const Landing = () => {
     }, [videoRef]);
 
     if (!joined) {
-            
-    return <div>
-            <video autoPlay ref={videoRef}></video>
-            <input type="text" onChange={(e) => {
-                setName(e.target.value);
-            }}>
-            </input>
+
+        return <div style={{ display: 'flex', gap: "20px", alignItems: "center", justifyContent: "center", flexDirection: "column", minHeight: "100vh" }}>
+            <video style={{ backgroundColor: "grey", borderRadius: "10px", aspectRatio: "16/9" }} autoPlay width={500} height="auto" ref={videoRef}></video>
+            {cameraRdy ? <p style={{ color: "green" }}>Ready to Join</p> : <p style={{ color: "red" }}>Camera not ready</p>}
             <button onClick={() => {
                 setJoined(true);
-            }}>Join</button>
+            }}>Connect</button>
         </div>
     }
 
-    return <Room name={name} localAudioTrack={localAudioTrack} localVideoTrack={localVideoTrack} />
+    return <Room name={"Manan"} localAudioTrack={localAudioTrack} localVideoTrack={localVideoTrack} />
 }
