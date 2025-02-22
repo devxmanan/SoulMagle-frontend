@@ -169,11 +169,11 @@ export const Room = ({
             });
             console.log("loop closed");
         })
-        socket.on("disconnect", () => {
-            setLobby(true);
-            setSendingPc(null);
-            console.log("Disconnected");
-        })
+        // socket.on("disconnect", () => {
+        //     setLobby(true);
+        //     setSendingPc(null);
+        //     console.log("Disconnected");
+        // })
 
         socket.on("lobby", () => {
             setLobby(true);
