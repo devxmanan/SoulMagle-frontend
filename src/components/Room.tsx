@@ -28,6 +28,11 @@ export const Room = ({
     const remoteVideoRef = useRef<any>();
     const localVideoRef = useRef<any>();
 
+    const handleEndCall = ()=>{
+        endCall();
+        socket?.disconnect();
+        setLobby(true);
+    }
     //to fix errors
     if (socket || sendingPc || receivingPc || remoteVideoTrack || remoteAudioTrack || remoteMediaStream) { }
     useEffect(() => {
@@ -216,7 +221,7 @@ export const Room = ({
         <div className="userMe" >
             Hi {name}
             <video className="videos_after_connection" autoPlay width={400} height={"auto"} ref={localVideoRef} />
-            <button onClick={endCall} style={{ height: "50px", width: "50px", borderRadius: "40px", border: "none", fontSize: "30px", backgroundColor: "#e8433e", color: "white", display: "flex", alignItems: "center", justifyContent: "center", marginTop: "20px", cursor: "pointer" }}><MdCallEnd /></button>
+            <button onClick={handleEndCall} style={{ height: "50px", width: "50px", borderRadius: "40px", border: "none", fontSize: "30px", backgroundColor: "#e8433e", color: "white", display: "flex", alignItems: "center", justifyContent: "center", marginTop: "20px", cursor: "pointer" }}><MdCallEnd /></button>
         </div>
 
     </div>
