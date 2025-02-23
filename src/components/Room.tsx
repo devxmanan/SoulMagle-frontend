@@ -3,6 +3,7 @@ import { FaArrowRight } from "react-icons/fa";
 import { MdCallEnd } from "react-icons/md";
 // import { useSearchParams } from "react-router-dom";
 import { Socket, io } from "socket.io-client";
+import useUser from "../contexts/UserContext";
 
 const URL = "https://soulmagle-backend.onrender.com";
 
@@ -25,17 +26,19 @@ export const Room = ({
     const [remoteVideoTrack, setRemoteVideoTrack] = useState<MediaStreamTrack | null>(null);
     const [remoteAudioTrack, setRemoteAudioTrack] = useState<MediaStreamTrack | null>(null);
     const [remoteMediaStream, setRemoteMediaStream] = useState<MediaStream | null>(null);
+    const { user } = useUser();
     const remoteVideoRef = useRef<any>();
     const localVideoRef = useRef<any>();
 
     const handleEndCall = () => {
         endCall();
         socket?.disconnect();
+        setLobby(true);
     }
     //to fix errors
     if (socket || sendingPc || receivingPc || remoteVideoTrack || remoteAudioTrack || remoteMediaStream) { }
     useEffect(() => {
-        const socket = io(URL);
+        const socket = io(URL, { query: { userId: user.id } });
         socket.on('send-offer', async ({ roomId }) => {
             console.log("sending offer");
             setLobby(false);
@@ -209,7 +212,7 @@ export const Room = ({
             setSendingPc(null);
             setReceivingPc(null);
             console.log("Disconnected");
-          });
+        });
 
         setSocket(socket)
     }, [name])
