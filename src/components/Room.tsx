@@ -31,7 +31,6 @@ export const Room = ({
     const handleEndCall = () => {
         endCall();
         socket?.disconnect();
-        setLobby(true);
     }
     //to fix errors
     if (socket || sendingPc || receivingPc || remoteVideoTrack || remoteAudioTrack || remoteMediaStream) { }
