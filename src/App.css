@@ -72,6 +72,39 @@ input {
   color: white;
 }
 
+
+.interests-container {
+  width: 300px;
+  margin: 50px auto;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.interests-container h2 {
+  margin-bottom: 20px;
+}
+
+.interest-item {
+  display: block;
+  margin: 10px 0;
+}
+
+.interest-item input {
+  margin-right: 10px;
+}
+
+.interests-container button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
 .room {
   display: flex;
   flex-direction: column;

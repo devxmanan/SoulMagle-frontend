@@ -1,32 +1,7 @@
-import { useEffect, useRef, useState } from "react"
-// import { Link } from "react-router-dom";
+import { useEffect,useRef, useState } from "react"
 import { Room } from "./Room";
-import { auth } from "../firebase";
-import { onAuthStateChanged } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
 
-export const Landing = () => {
-
-
-    const [user, setUser] = useState<any>(null);
-
-    const navigate = useNavigate();
-
-
-
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user: any) => {
-            if (user) {
-                setUser(user);
-            } else {
-                navigate("/login", { replace: true })
-            }
-        });
-
-        return () => unsubscribe();
-    }, []);
-    console.log(user);
-
+const Lobby = () => {
 
     const [localAudioTrack, setLocalAudioTrack] = useState<MediaStreamTrack | null>(null);
     const [localVideoTrack, setlocalVideoTrack] = useState<MediaStreamTrack | null>(null);
@@ -65,14 +40,18 @@ export const Landing = () => {
 
     if (!joined) {
 
-        return <div style={{ display: 'flex', gap: "20px", alignItems: "center", justifyContent: "center", flexDirection: "column", minHeight: "100vh" }}>
-            <video style={{ backgroundColor: "grey", borderRadius: "10px", aspectRatio: "16/9" }} autoPlay width={500} height="auto" ref={videoRef}></video>
-            {cameraRdy ? <p style={{ color: "green" }}>Ready to Join</p> : <p style={{ color: "red" }}>Camera not ready</p>}
-            <button className="primaryBtn" onClick={() => {
-                setJoined(true);
-            }}>Connect</button>
-        </div>
+        return (
+            <div style={{ display: 'flex', gap: "20px", alignItems: "center", justifyContent: "center", flexDirection: "column", minHeight: "100vh" }}>
+                <video style={{ backgroundColor: "grey", borderRadius: "10px", aspectRatio: "16/9" }} autoPlay width={500} height="auto" ref={videoRef}></video>
+                {cameraRdy ? <p style={{ color: "green" }}>Ready to Join</p> : <p style={{ color: "red" }}>Camera not ready</p>}
+                <button className="primaryBtn" onClick={() => {
+                    setJoined(true);
+                }}>Connect</button>
+            </div>
+        )
     }
-
+    
     return <Room endCall={endCall} name={"Manan"} localAudioTrack={localAudioTrack} localVideoTrack={localVideoTrack} />
 }
+
+    export default Lobby
