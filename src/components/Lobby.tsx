@@ -1,5 +1,6 @@
-import { useEffect,useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Room } from "./Room";
+import useUser from "../contexts/UserContext";
 
 const Lobby = () => {
 
@@ -7,7 +8,7 @@ const Lobby = () => {
     const [localVideoTrack, setlocalVideoTrack] = useState<MediaStreamTrack | null>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const [cameraRdy, setCameraRdy] = useState(false);
-
+    const { user } = useUser();
     const [joined, setJoined] = useState(false);
     const endCall = () => {
         setJoined(false);
@@ -50,8 +51,8 @@ const Lobby = () => {
             </div>
         )
     }
-    
-    return <Room endCall={endCall} name={"Manan"} localAudioTrack={localAudioTrack} localVideoTrack={localVideoTrack} />
+
+    return <Room endCall={endCall} name={user.name} localAudioTrack={localAudioTrack} localVideoTrack={localVideoTrack} />
 }
 
-    export default Lobby
+export default Lobby

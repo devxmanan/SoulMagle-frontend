@@ -205,6 +205,13 @@ export const Room = ({
             }
         })
 
+        socket.on("disconnect", () => {
+            setLobby(true);
+            setSendingPc(null);
+            setReceivingPc(null);
+            console.log("Disconnected");
+          });
+
         setSocket(socket)
     }, [name])
 
