@@ -1,15 +1,21 @@
-import { doc,  updateDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
-import { firestore } from '../firebase';
 import useUser from '../contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
-
+import { GoogleGenerativeAI } from '@google/generative-ai';
 const interestsArray = ['Sports', 'Cricket', 'Music', 'Travel', 'Reading'];
 
 const InterestForm = () => {
     const [interests, setInterests] = useState<any>([]);
     const navigate = useNavigate();
-    const { user, userLog } = useUser();
+    const { userLog } = useUser();
+    const genAI = new GoogleGenerativeAI("AIzaSyD-BjFqJdXb1LWIlwla_Ef_wADVObWhlDo");
+    const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
+
+    async function generateEmbedding(interests: string[]) {
+        const interestsText = interests.join(", ");
+        const result = await model.embedContent(interestsText);
+        return result.embedding.values
+    }
 
     const handleCheckboxChange = (event: any) => {
         const { value, checked } = event.target;
@@ -20,17 +26,24 @@ const InterestForm = () => {
         }
     };
 
-    const handleSubmit = () => {
-        console.log(interests);
-        try {
-            updateDoc(doc(firestore, "users", user.id), {
-                interests
-            }).then(() => {
-                navigate("/", { replace: true })
-            })
-        } catch (error) {
-            console.log("Error while uploading interests to database", error);
+    const handleSubmit = async () => {
+        const embedding = await generateEmbedding(interests);
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/v1/auth/update-interests`, {
+            method: 'POST',
+            credentials: "include" as const,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ interests: embedding }),
+        });
+
+        const res = await response.json();
+        if (res.success) {
+            navigate("/")
+        } else {
+            console.log(res.message)
         }
+
     };
     useEffect(() => {
         if (!userLog) {

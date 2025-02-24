@@ -1,24 +1,26 @@
 import { createContext, useContext } from "react";
 
 export interface User {
-    id: string;
+    _id: string;
     name: string,
     email: string,
-    photoURL: string,
+    profilePic: string,
     interests: string[]
 }
 
 export const initialUserValue = {
-    id: "",
+    _id: "",
     name: "",
     email: "",
-    photoURL: "",
+    profilePic: "",
     interests: [""]
 }
 
 export const UserContext = createContext({
     userLog: false,
-    user: initialUserValue
+    user: initialUserValue,
+    //@ts-ignore
+    setUserLogged: (value: boolean) => { }
 })
 
 export const UserProvider = UserContext.Provider

@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react"
 // import { Link } from "react-router-dom";
-import { auth, firestore } from "./firebase";
-import { onAuthStateChanged } from "firebase/auth";
 import { Outlet, useNavigate } from "react-router-dom";
 import { initialUserValue, User, UserProvider } from "./contexts/UserContext";
-import { doc, onSnapshot } from "firebase/firestore";
+
 import "./App.css"
 
 
@@ -13,20 +11,30 @@ export const App = () => {
   const [userLog, setUserLog] = useState(false);
   const navigate = useNavigate();
 
-  const getUserData = (id: string) => {
+  const setUserLogged = (value: boolean) => {
+    setUserLog(value);
+  }
+  const getUserData = async () => {
     try {
-      onSnapshot(doc(firestore, "users", `${id}`), (doc) => {
-        const data = doc.data();
-        setUser({
-          id: data?.id || "",
-          name: data?.name || "",
-          email: data?.email || "",
-          photoURL: data?.photoURL || "",
-          interests: data?.interests || []
-        })
-      })
-    } catch (error) {
-      console.log(error);
+      const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/v1/auth/me`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const dataRes = await res.json();
+      console.log(dataRes)
+      if (dataRes.success) {
+        setUserLog(true);
+        setUser(dataRes.data);
+      } else {
+        navigate("/login", { replace: true })
+        console.error(dataRes.message)
+      }
+    } catch (error: any) {
+      navigate("/login", { replace: true })
+      console.error(error.message);
     }
   }
 
@@ -34,25 +42,16 @@ export const App = () => {
     if (userLog && user.interests.length < 1) {
       navigate("/interestsForm", { replace: true })
     }
-  }, [user])
-  console.log(user);
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user: any) => {
-      if (user) {
-        setUserLog(true)
-        getUserData(user.uid);
-      } else {
-        setUserLog(false);
-        navigate("/login", { replace: true })
-      }
-    });
+  }, [user, userLog])
 
-    return () => unsubscribe();
-  }, []);
+  useEffect(() => {
+    getUserData();
+  }, [])
+
 
 
   return (
-    <UserProvider value={{ user: user, userLog: userLog }}>
+    <UserProvider value={{ user, setUserLogged, userLog }}>
       <Outlet />
     </UserProvider>
   )

@@ -1,49 +1,44 @@
 import { GrGoogle } from "react-icons/gr";
 import { useNavigate } from "react-router-dom";
-import { firestore, signInWithGoogle } from "../firebase";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { signInWithGoogle } from "../firebase";
+import useUser from "../contexts/UserContext";
 
 const Login = () => {
     const navigate = useNavigate();
+    const { userLog, setUserLogged } = useUser();
     const handleGoogleLogin = async (e: any) => {
         e.preventDefault();
         const user = await signInWithGoogle()
         if (user) {
-            try {
-                const docRef = doc(firestore, "users", `${user.uid}`);
-                const docSnap = await getDoc(docRef)
-                if (docSnap.exists()) {
-                    updateDoc(doc(firestore, "users", `${user.uid}`), {
-                        last_login: Date.now()
-                    }).then(() => {
-                        if (docSnap.data()?.interests.lengtb < 1) {
-                            navigate("/interestsForm", { replace: true })
-                        } else {
-                            navigate("/", { replace: true })
-                        }
-                    }).catch(() => {
-                        console.error("Error Logging In!")
-                    })
+            const idToken = await user.getIdToken();
+            // Send this token to server
+            if (user) {
+
+                const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/v1/auth/social-auth`, {
+                    method: 'POST',
+                    credentials: "include" as const,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ idToken }),
+                });
+
+                const res = await response.json();
+                if (res.success) {
+                    setUserLogged(true);
                 } else {
-                    setDoc(doc(firestore, "users", `${user.uid}`), {
-                        id: user.uid,
-                        email: user.email,
-                        name: user.displayName,
-                        photoURL: user.photoURL,
-                        account_created: Date.now(),
-                        last_login: Date.now(),
-                        interests: [],
-                    }).then(() => {
-                        navigate("/interestsForm", { replace: true })
-                    }).catch(() => {
-                        console.error("Error Signing Up!")
-                    })
+                    setUserLogged(false)
                 }
-            } catch (error) {
-                console.error("Error getting user data:", error);
+            } else {
+                console.log('Error signing in with Google');
             }
         }
+
     };
+
+    if (userLog) {
+        navigate("/interestsForm", { replace: true })
+    }
 
     return (
         <div className="landing-page">

@@ -5,7 +5,7 @@ import { MdCallEnd } from "react-icons/md";
 import { Socket, io } from "socket.io-client";
 import useUser from "../contexts/UserContext";
 
-const URL = "https://soulmagle-backend.onrender.com";
+const URL = import.meta.env.VITE_SERVER_URL;
 
 export const Room = ({
     name,
@@ -32,18 +32,22 @@ export const Room = ({
 
     const handleEndCall = () => {
         endCall();
-        socket?.disconnect();
+        sendingPc?.close();
+        receivingPc?.close();
+        setSendingPc(null);
+        setReceivingPc(null);
         setLobby(true);
+        socket?.disconnect();
     }
     //to fix errors
     if (socket || sendingPc || receivingPc || remoteVideoTrack || remoteAudioTrack || remoteMediaStream) { }
+    
     useEffect(() => {
-        const socket = io(URL, { query: { userId: user.id } });
+        const socket = io(URL, { query: { userId: user._id } });
         socket.on('send-offer', async ({ roomId }) => {
             console.log("sending offer");
             setLobby(false);
             const pc = new RTCPeerConnection();
-
             setSendingPc(pc);
             if (localVideoTrack) {
                 console.error("added tack");
@@ -97,22 +101,6 @@ export const Room = ({
             setReceivingPc(pc);
             //@ts-ignore
             window.pcr = pc;
-            pc.ontrack = () => {
-                alert("ontrack");
-                // console.error("inside ontrack");
-                // const {track, type} = e;
-                // if (type == 'audio') {
-                //     // setRemoteAudioTrack(track);
-                //     // @ts-ignore
-                //     remoteVideoRef.current.srcObject.addTrack(track)
-                // } else {
-                //     // setRemoteVideoTrack(track);
-                //     // @ts-ignore
-                //     remoteVideoRef.current.srcObject.addTrack(track)
-                // }
-                // //@ts-ignore
-                // remoteVideoRef.current.play();
-            }
 
             pc.onicecandidate = async (e) => {
                 if (!e.candidate) {
@@ -143,22 +131,9 @@ export const Room = ({
                     setRemoteAudioTrack(track1)
                     setRemoteVideoTrack(track2)
                 }
-                //@ts-ignore
                 remoteVideoRef.current.srcObject.addTrack(track1)
-                //@ts-ignore
                 remoteVideoRef.current.srcObject.addTrack(track2)
-                //@ts-ignore
                 remoteVideoRef.current.play();
-                // if (type == 'audio') {
-                //     // setRemoteAudioTrack(track);
-                //     // @ts-ignore
-                //     remoteVideoRef.current.srcObject.addTrack(track)
-                // } else {
-                //     // setRemoteVideoTrack(track);
-                //     // @ts-ignore
-                //     remoteVideoRef.current.srcObject.addTrack(track)
-                // }
-                // //@ts-ignore
             }, 5000)
         });
 
@@ -171,11 +146,7 @@ export const Room = ({
             });
             console.log("loop closed");
         })
-        // socket.on("disconnect", () => {
-        //     setLobby(true);
-        //     setSendingPc(null);
-        //     console.log("Disconnected");
-        // })
+
 
         socket.on("lobby", () => {
             setLobby(true);
@@ -206,13 +177,6 @@ export const Room = ({
                 });
             }
         })
-
-        socket.on("disconnect", () => {
-            setLobby(true);
-            setSendingPc(null);
-            setReceivingPc(null);
-            console.log("Disconnected");
-        });
 
         setSocket(socket)
     }, [name])
